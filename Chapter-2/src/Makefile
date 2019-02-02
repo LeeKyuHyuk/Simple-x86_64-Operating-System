@@ -3,7 +3,7 @@ all:
 	x86_64-linux-gnu-ld -Ttext 0x7c00 --oformat=binary bootloader.o -o bootloader.bin
 
 run:
-	qemu-system-x86_64 bootloader.bin
+	qemu-system-x86_64 -M pc -fda bootloader.bin
 
 clean:
 	rm -rfv *.o *.bin
