@@ -110,7 +110,7 @@ extract $SOURCES_DIR/mpfr-$CONFIG_MPFR_VERSION.tar.xz $BUILD_DIR
 --with-gmp=$TOOLS_DIR/usr \
 --disable-shared \
 --enable-static \
---enable-thread-safe)
+--enable-thread-safe )
 make -j$PARALLEL_JOBS -C $BUILD_DIR/mpfr-$CONFIG_MPFR_VERSION
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/mpfr-$CONFIG_MPFR_VERSION
 rm -rf $BUILD_DIR/mpfr-$CONFIG_MPFR_VERSION
