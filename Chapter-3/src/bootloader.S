@@ -1,19 +1,42 @@
-.org 0x00                             # Code의 시작 주소를 0x00으로 설정합니다.
-.code16                               # 16비트 코드로 설정합니다.
+.org 0x00                      # Code의 시작 주소를 0x00으로 설정합니다.
+.code16                        # 16비트 코드로 설정합니다.
 
-.text                                 # Text Segment를 정의합니다.
+.text                          # Text Segment를 정의합니다.
     .globl _start;
 
 _start:
-    mov $0xB800, %AX                  # AX에 0xB800을 설정합니다.
-    movw %AX, %DS                     # DS에 AX값을 설정합니다. (DS = 0xB800)
-	
-    movb $'K', %DS:0x00               # 0xB800 + 0x0000에 'K' Byte를 저장합니다.
-    movb $0x47, %DS:0x01              # 0xB800 + 0x0001에 '0x47' Byte를 저장합니다.
-    movb $'H', %DS:0x02               # 0xB800 + 0x0002에 'H' Byte를 저장합니다.
-    movb $0x17, %DS:0x03              # 0xB800 + 0x0003에 '0x17' Byte를 저장합니다.
+    mov $0x7C00, %AX           # AX에 0x7C00(부트로더의 시작 주소)를 설정합니다.
+    movw %AX, %DS              # DS에 AX값을 설정합니다. (DS = 0x7C00)
+    mov $0xB800, %AX           # AX에 0xB800(비디오 메모리의 시작 주소)를 설정합니다.
+    movw %AX, %ES              # ES에 AX값을 설정합니다. (ES = 0xB800)
+    mov 0, %SI                 # SI 레지스터를 초기화합니다.
 
-    . = _start + 510                  # 현재 위치에서 510번 주소로 이동합니다.
-                                      # 현재 위치에서 510번 주소까지 0x00으로 채워진다.
-    .byte 0x55                        # Boot Signature를 추가합니다.
-    .byte 0xAA                        # 0x55 0xAA는 부트로더임을 알리는 값입니다.
+.SCREENCLEARLOOP:              # 화면을 지우는 반복문
+    movb $0x00, %ES:(%SI)      # 비디오 메모리의 문자에 위치하는 주소에 0을 복사하여 문자를 삭제
+    movb $0x1F, %ES:1(%SI)     # 속성값에 파란 바탕에 하얀 글씨 속성을 복사
+    add $2, %SI                # 문자와 속성을 설정했으므로 다음 위치(2바이트뒤)로 이동
+    cmp $(80 * 25 * 2), %SI    # 화면의 전체 크기(80*25*2)와 SI의 값을 비교
+    jl .SCREENCLEARLOOP        # SI 레지스터가 80*25*2의 값보다 작다면 아직 지우지 못한 영역이 있으므로,
+                               # .SCREENCLEARLOOP 레이블로 이동
+
+.MESSAGELOOP:
+    movb MESSAGE1(%SI), %CL
+    cmp $0, %CL
+    je .MESSAGEEND
+
+    movb %CL, %ES:(%DI)
+    add $1, %SI
+    add $2, %DI
+
+    jmp .MESSAGELOOP
+
+.MESSAGEEND:
+  jmp .
+
+MESSAGE1:
+  .asciz "Hello, World"
+
+. = _start + 510               # 현재 위치(0x00)에서 510번 주소로 이동
+                               # 현재 위치(0x00)에서 510번 주소까지 0x00으로 채워진다.
+.byte 0x55                     # Boot Signature 추가
+.byte 0xaa                     # 0x55 0xAA는 부트로더임을 알리는 값입니다.
