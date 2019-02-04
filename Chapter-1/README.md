@@ -124,7 +124,7 @@ $ ./configure \
 --with-system-zlib \
 --with-gmp=/home/leekyuhyuk/workspace/tools \
 --with-mpfr=/home/leekyuhyuk/workspace/tools \
---with-mpc=/home/leekyuhyuk/workspace/tools )
+--with-mpc=/home/leekyuhyuk/workspace/tools
 $ make
 $ make install
 $ cd ..
