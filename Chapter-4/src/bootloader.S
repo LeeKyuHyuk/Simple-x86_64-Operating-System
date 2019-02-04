@@ -5,7 +5,7 @@
 	.globl _start;
 
 _start:
-	jmp _boot # _boot 레이블로 이동합니다.
+	jmp _boot			# _boot 레이블로 이동합니다.
 
 	# helloWorld, url에 문자열을 정의합니다.
 	helloWorld: .asciz "Hello, World!\n\r"
@@ -14,13 +14,13 @@ _start:
 	# <Macro Start> print(str) : String을 출력하는 매크로
 	.macro print str
 		leaw  \str, %si		# str(argument)의 주소를 SI레지스터에 넣습니다.
-		call .putchar		# putchar 호출합니다.
+		call .putchar		# putchar 함수를 호출합니다.
 	.endm
 	# <Macro End> print(str)
 
 	# <Function Start> putchar : Character를 출력합니다.
 	.putchar:
-		lodsb # AX의 하위 1바이트(AL) 레지스터에
+		lodsb			# AX의 하위 1바이트(AL) 레지스터에
 					# DS 세그먼트의 오프셋 SI 의 값을 저장합니다.
 					# AL = DS:SI와 같습니다.
 					# 여기서 SI의 값은 print 매크로에서 저장한 str(argument)의 주소 입니다.
